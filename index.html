@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pd</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
+</head>
+<body>
+    <script>
+        let n = 100;
+        let dimension = 5;
+        let costMap;
+        let sC = 40;
+        let position;
+        function setup() {
+            createCanvas(600, 600, WEBGL)
+            costMap = genCostMap()
+            position = [Math.random() * (dimension-1), Math.random() * (dimension-1)]
+        }
+        function approximate(a, b, x) {
+            return a*x**2+b*x
+        }
+        function bench(x) {
+            return x**2-x
+        }
+        function cost(a, b) {
+            let cSum = 0;
+            for(let i = 0; i < n; i++) {
+                cSum += (approximate(a, b, i) - bench(i))**2
+            }
+            return cSum/n;
+        }
+        function pd(a, b, d) {
+            let add = [(d+1)%2, d]
+            return cost(a+add[0], b+add[1])-cost(a,b)
+        }
+        function genCostMap() {
+            let r = []
+            for(let i = 0; i < dimension; i++) {
+                r.push([])
+                for(let j = 0; j < dimension; j++) {
+                    r[i].push(cost(j,i))
+                }
+            }
+            return r;
+        }
+        function moveBall() {
+            let v = [-pd(position[0], position[1], 0), -pd(position[0], position[1], 1)]
+            v = v.map(x => x/(sC**5))
+            for(let i = 0; i < position.length; i++) {
+                position[i] += v[i]
+            }
+        }
+        function draw(){
+            background(0)
+            stroke(255)
+            orbitControl();
+            noFill()
+            for(let i = 0; i < dimension; i++) {
+                beginShape()
+                for(let j = 0; j < dimension; j++) {
+                    vertex(j*sC, costMap[j][i]/(sC**4), i*sC)
+                }
+                endShape()
+            }
+            for(let j = 0; j < dimension; j++) {
+                beginShape()
+                for(let i = 0; i < dimension; i++) {
+                    vertex(j*sC, costMap[j][i]/(sC**4), i*sC)
+                }
+                endShape()
+            }
+            stroke(255, 0, 0)
+            point(position[0]*sC, costMap[Math.floor(position[1])][Math.floor(position[0])]/(sC**4), position[1]*sC)
+
+        }
+        
+        function keyPressed() {
+            if(keyCode === 32) {
+                moveBall();
+            }
+        }
+    </script>
+</body>
+</html>
