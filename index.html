@@ -46,16 +46,14 @@
             return r;
         }
         function moveBall() {
-            let v = [-pd(position[0], position[1], 0), -pd(position[0], position[1], 1)]
+            let v = [pd(position[0], position[1], 1),pd(position[0], position[1], 0)]
             v = v.map(x => x/(sC**5))
             for(let i = 0; i < position.length; i++) {
                 position[i] += v[i]
             }
         }
-        function draw(){
-            background(0)
+        function drawContour() {
             stroke(255)
-            orbitControl();
             noFill()
             for(let i = 0; i < dimension; i++) {
                 beginShape()
@@ -71,9 +69,28 @@
                 }
                 endShape()
             }
-            stroke(255, 0, 0)
-            point(position[0]*sC, costMap[Math.floor(position[1])][Math.floor(position[0])]/(sC**4), position[1]*sC)
+        }
+        function fillContour() { 
 
+        }
+        function drawBall() {
+            stroke(255, 0, 0)
+            point(position[0]*sC, cost(position[1],position[0])/(sC**4), position[1]*sC)
+
+        }
+        function draw(){
+            background(0)
+            orbitControl();
+            drawContour();
+            drawBall();
+            fill(255);
+            beginShape()
+            for(let i = 0; i < 2; i++) {
+                for(let j = 0; j < 2; j++) {
+                    vertex((i === 0 ? j : (1-j))* sC*(dimension-1), 0, i * sC*(dimension-1))
+                }
+            }
+            endShape()
         }
         
         function keyPressed() {
