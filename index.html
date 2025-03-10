@@ -46,7 +46,7 @@
             return r;
         }
         function moveBall() {
-            let v = [pd(position[0], position[1], 1),pd(position[0], position[1], 0)]
+            let v = [-pd(position[0], position[1], 1),-pd(position[0], position[1], 0)]
             v = v.map(x => x/(sC**5))
             for(let i = 0; i < position.length; i++) {
                 position[i] += v[i]
@@ -58,14 +58,14 @@
             for(let i = 0; i < dimension; i++) {
                 beginShape()
                 for(let j = 0; j < dimension; j++) {
-                    vertex(j*sC, costMap[j][i]/(sC**4), i*sC)
+                    vertex(j*sC, -costMap[j][i]/(sC**4), i*sC)
                 }
                 endShape()
             }
             for(let j = 0; j < dimension; j++) {
                 beginShape()
                 for(let i = 0; i < dimension; i++) {
-                    vertex(j*sC, costMap[j][i]/(sC**4), i*sC)
+                    vertex(j*sC, -costMap[j][i]/(sC**4), i*sC)
                 }
                 endShape()
             }
@@ -75,7 +75,7 @@
         }
         function drawBall() {
             stroke(255, 0, 0)
-            point(position[0]*sC, cost(position[1],position[0])/(sC**4), position[1]*sC)
+            point(position[0]*sC, -cost(position[1],position[0])/(sC**4), position[1]*sC)
 
         }
         function draw(){
